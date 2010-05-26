@@ -1,0 +1,290 @@
+*OGDL 1.0 Working draft*  
+Ordered Graph Data Language
+    Version 1.0 Working draft, 20 Dec 2005
+    Copyright © 2002-2005, Rolf Veen
+    This is an open standard. See the license at ogdl.org.
+
+# 1. Introduction
+
+OGDL is a textual format that represents trees or graphs of data,
+where the nodes are strings and the edges are space or indentation.
+Its main objectives are simplicity and readability.
+
+# 2. The graph model
+
+The text format specified here represents a directed graph G=(N,E),
+where N is an ordered *bag* of nodes and E a relation NxN. Nodes
+are represented by strings. Each member of E is an arc (edge), and
+is represented by space between nodes.
+
+# 3. The building blocks of OGDL
+
+## 3.1. Strings and white space
+
+Strings and space are the basics of OGDL (if a string contains
+spaces then it has to be quoted). These two elements form a tree,
+where strings are childs of the immediately preceding lower
+indented string. The tree can be converted into a graph if
+necessary, by using special strings (see the level 2 grammar).
+
+The characters that delimit strings are normally white space
+characters, but there are some exceptions: the comma and the
+parenthesis, that permit an inline or compact form.
+
+    a
+      b
+      "string with spaces"
+
+## 3.2. Comma
+
+The comma has the effect of reseting the level of indentation to
+that of the beginning of the line. The example above can be
+rewritten:
+
+    a
+      b, "string with spaces"
+
+## 3.3. Parenthesis
+
+The same example, but using parenthesis:
+
+    a ( b, "string with spaces" )
+
+It could also have been written without the extra spaces:
+
+    a(b,"string with spaces")
+
+This specification doesn't support nodes after a group (a group is
+a group of nodes surrounded by parenthesis).
+
+## 3.4. Text block
+
+A text block is a string with possibly newlines in it. A standalone
+'\\' character at the end of a line introduces a text block, as in
+the following example.
+
+    text_block \
+      This is a multiline
+      description
+
+## 3.5. Comments
+
+The '\#' character introduces a comment. Comments are treated as
+white space, and thus ignored.
+
+    # this is a comment
+    #this also
+
+The special combination "\#?" is reserved for an optional metadata
+block, which is also expressed in OGDL. This is explained later.
+
+## 3.6. End of stream
+
+Any character that is not a space, break or word character will end
+the OGDL stream. That means that the parser will exit when it finds
+such a character. Most characters below ASCII 32 (space), and the
+special combination of two standalone dashes will end the current
+stream.
+
+This mechanism has at least two uses. One is in OGDL log files,
+where many OGDL fragments are concatenated in one file: pointing
+the parser to the start of any of them will return that fragment
+only. Another use is in serial transmission, as for example defined
+in the OGDL Interchange specification, where, again, an unknown
+amount of OGDL fragments or graphs are concatenated and transmitted
+as one message.
+
+Besides most characters in the ASCII control block range (below
+ASCII 32), a line with only two consecutive dashes also stops the
+OGDL parser. It was defined in order to have a visible equivalent
+of an ending character, so that it can be used in situations where
+inserting a control character is not possible or inconvenient.
+
+Here is an example of two concatenated (but independent) OGDL
+streams:
+
+    a
+      b
+    --
+    c
+      d
+
+# 4. Layers
+
+OGDL is specified as a series of layers:
+
+-   **level 1**: parses the file (stream) into a tree, preserving
+    order and duplicates.
+-   **level 2**: resolves cyclic references (anchor / reference),
+    converting the tree into a graph.
+
+It is not requiered that tools comply with both layers. It is very
+possible that someone wants to implement only layer 1, that
+contains the real heart of OGDL. That depends on the field of
+application. Presenting tools or libraries as 'OGDL 1.0 level 1'
+compliant is correct.
+
+# 5. Level 1: Tree grammar
+
+    [1] char_word ::= [0x21-0xD7FF] | [0xE000-0xFFFD] | [0x10000-0x10FFFD]
+
+This range includes all Unicode characters, except characters below
+and including 0x20 (space), Unicode surrogate blocks, 0xfffe and
+0xffff.
+
+    [2] char_space ::= 0x20 | 0x09
+
+    [3] char_break ::= 0x0d | 0x0a
+
+    [4] char_end ::= any_char - char_word - char_space - char_break
+
+This production states that any character that is not char\_word,
+char\_space or char\_break is considered the end of the OGDL
+stream, and makes the parser stop and return, without signaling an
+error.
+
+    [5] word ::= ( char_word - ',' - '(' - ')' )+
+
+    [6] break ::= 0x0a | 0x0d | (0x0d 0x0a)
+
+When parsing, breaks are normalized: standalone 0x0d characters and
+0x0d 0x0a sequences are converted to 0x0a characters. The emitter
+should print breaks according to the particular operating system
+rules.
+
+    [7] end ::= char_end | ( break "--" break )
+
+    [8] space ::= char_space+
+
+    [9] space(n) ::= char_space*n, where n is the equivalent number of spaces.
+
+This is the indentation production. It corresponds to the
+equivalent number of spaces between the start of a line and the
+beginning of the first scalar node. For any two consecutive scalars
+preceded by indentation, the second is child of the first one if it
+is more indented. Intermixing of spaces and tabs is NOT allowed:
+either tabs or spaces should be used for indentation within a
+document.
+
+    [10] single_quoted ::= "'" (char_word | char_space | break)* "'"
+
+A quote character that has to be included in the string should be
+preceded by '\\'. If the string contains line breaks, leading
+spaces on each new line are stripped off. The initial indentation
+is defined by the first line after a break. The indentation is
+decreased if word characters appear at a lower indentation, but it
+is never increased. Lines ending with '\\' are concatenaded. Escape
+sequences that are recognized are \\", \\' and \\\\. The character
+'\\' should be considered literal in other cases.
+
+    [11] double_quoted ::= '"' (char_word | char_space | break)* '"'
+
+Same rule applies as for [10].
+
+    [12] comment ::= '#' (char_word | char_space)+
+
+    [13] scalar ::= (word | single_quoted | double_quoted )
+
+    [14] block(n) ::= scalar '\' space? break (space(>n) (char_word | char_space)* break)+
+
+A block is a scalar leaf node, i.e., it cannot be parent of other
+nodes. It is to be used for holding a block of literal text. The
+only transformation that it undergoes is leading space stripping,
+according to the indentation rules. A block is child of the scalar
+that starts it.
+
+    [15] list ::= (scalar|group) ( (space? ',')? space? (scalar|group) )*
+
+    [16] group ::= '(' space? list?  space? ')'
+
+    [17] line(n) ::=
+            space(n) (list|group)?  space? comment? break  | 
+            space? comment? break |
+            space(n) block
+
+    [18] graph ::= line* end
+
+# 6. Level 2: Graph grammar
+
+    [19] anchor ::= '-' '{' word '}'
+
+    [20] reference ::= '+' '{' word '}'
+
+    [21] path_reference ::= '=' '{' path '}'
+
+Path syntax should be according to the OGDL Path reference.
+
+# 7. Character encoding
+
+OGDL streams must parse well without explicit encoding information
+for all ASCII transparent encodings.
+
+All special characters used in OGDL that define structure and
+delimit tokens are part of the US-ASCII (ISO646-US) set. It is
+specified that, in unidentified 8-bit streams without a
+[Unicode BOM](http://www.unicode.org/unicode/faq/utf_bom.html),
+there can be no ASCII values that don't map to ASCII characters,
+i.e, should be ASCII transparent. This guarantees that tools that
+support only single byte streams will work on any 8-bit fixed or
+variable length encoded stream, particularly
+[UTF-8](ftp://ftp.rfc-editor.org/in-notes/rfc2279.txt) and most
+ISO8859 variants.
+
+When a Unicode BOM is present, then the parser should interpret the
+stream as Unicode and choose the right UTF transform.
+
+# 8. Meta-information
+
+The '\#?' character combination used as a top level node (not
+necessarily the first one) is reserved for comunication between the
+OGDL stream and the parser. It is not mandatory and allows for
+future enhancements of the standard. For example, some optional
+behavior could be switched on. Normally meta-information will not
+be part of the in-memory graph. Meta-information is written in
+OGDL, as can be seen in the following examples.
+
+    #? ogdl 1.0
+
+    #? ( ogdl 1.0, encoding iso-8859-1 )
+
+The meta-information keys that are currently reserved are: ogdl,
+encoding and schema.
+
+# 9. Round-tripping
+
+OGDL streams are guaranted to round-trip in the presence of a
+capable parser and emitter, while maintaining a simple in-memory
+structure of nested nodes. Such a parser includes meta-information
+but not comments. Depending on the precision of the parser-emitter
+chain, the resulting stream may differ from the original in format
+or not.
+
+### A. Changes to this document
+
+    20051220  Comments are thrown away. The tentative part
+              (tables) is left out for this version.
+              Nodes after groups not allowed.
+    
+    20051215  Space after '#' not needed in comments. 
+              Other small corrections.
+    
+    20050403  Some descriptive text added.
+              Defined a new EOS sequence consisting of two dashes.
+              Make optional the spaces around '(', ')' and ','
+              
+    20040614  Tabs and spaces can not be intermixed in indentation.
+    
+    20040305  Comments, meta-information added. 
+              Semicolons deleted, comma chages meaning.
+              Round-tripping chapter added.
+              Some productions commented.
+    
+    20031117  Renamed to Version 1.0
+              New cycle productions (were &{} and *{}). 
+              Unicode BOM mandates Unicode stream.
+              Implementor decides whether he/she needs level 2. 
+    
+    20030902  Initial release
+
+
+

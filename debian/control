@@ -1,0 +1,56 @@
+Source: haskell-ogdl
+Section: libdevel
+Priority: optional
+Maintainer: Thedward Blevins <thedward@barsoom.net>
+Standards-Version: 3.8.1
+Build-Depends: debhelper (>= 5), cdbs, dpatch, haskell-devscripts (>= 0.6.15+nmu1), ghc6, ghc6-prof
+Build-Depends-Indep: ghc6-doc, haddock, hscolour
+Homepage: http://hackage.haskell.org/cgi-bin/ogdl/package/ogdl
+
+Package: libghc6-ogdl-dev
+Architecture: any
+Depends: ${haskell:Depends}, ${shlibs:Depends}, ${misc:Depends}
+Suggests: libghc6-ogdl-doc (= ${binary:Version}), libghc6-ogdl-prof (= ${binary:Version})
+Description:            Ordered Graph Data Language parsing Library
+ This package provides a library for the Haskell programming language.
+ See http://www.haskell.org/ for more information on Haskell.
+ .
+ information in the form of graphs, where the nodes
+ are strings and the arcs or edges are spaces or indentation. 
+ . This library provides an OGDL parser and an incomplete 
+ OGDL Path implentation for extracting values from an
+ OGDL tree.
+ . -- The license under which the package is released.
+
+Package: libghc6-ogdl-prof
+Architecture: any
+Depends: libghc6-ogdl-dev (= ${binary:Version}), ${haskell:Depends}, ${shlibs:Depends}, ${misc:Depends}
+Description:            Ordered Graph Data Language parsing Library; profiling libraries
+ This package provides a library for the Haskell programming language,
+ compiled for profiling.
+ See http://www.haskell.org/ for more information on Haskell.
+ .
+ information in the form of graphs, where the nodes
+ are strings and the arcs or edges are spaces or indentation. 
+ . This library provides an OGDL parser and an incomplete 
+ OGDL Path implentation for extracting values from an
+ OGDL tree.
+ . -- The license under which the package is released.
+
+Package: libghc6-ogdl-doc
+Section: doc
+Architecture: all
+Depends: ${misc:Depends}
+Recommends: ghc6-doc (>= 6.8.2)
+Suggests: libghc6-ogdl-dev (= ${binary:Version})
+Description:            Ordered Graph Data Language parsing Library; documentation
+ This package provides the documentation for a library for the Haskell
+ programming language.
+ See http://www.haskell.org/ for more information on Haskell.
+ .
+ information in the form of graphs, where the nodes
+ are strings and the arcs or edges are spaces or indentation. 
+ . This library provides an OGDL parser and an incomplete 
+ OGDL Path implentation for extracting values from an
+ OGDL tree.
+ . -- The license under which the package is released.
