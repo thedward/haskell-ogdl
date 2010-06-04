@@ -271,8 +271,10 @@ tree = do whiteSpace
 
 -- //     [18] graph ::= line* end
 
-ogdl = liftM (ogdlRoot . concat) $ tree `sepEndBy1` whiteSpace
-  where ogdlRoot xs = [Node "OGDL" xs]
+--ogdl = liftM (ogdlRoot . concat) $ tree `sepEndBy1` whiteSpace
+--  where ogdlRoot xs = [Node "OGDL" xs]
+
+ogdl = liftM concat $ tree `sepEndBy1` whiteSpace
 
 parseOGDL filename source = runParser ogdl emptyState filename source
 
