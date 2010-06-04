@@ -1,4 +1,4 @@
-{-# LANGUAGE TypeSynonymInstances, FlexibleInstances #-}
+{-# LANGUAGE FlexibleInstances #-}
 {- reference: http://ogdl.sourceforge.net/spec/ogdl-path.htm -}
 
 module Text.OGDL.Path where
@@ -8,28 +8,15 @@ import Data.Tree ( Tree(..) )
 import Data.Maybe ( catMaybes, maybeToList )
 import Data.List (intercalate,genericDrop)
 import Text.Regex.TDFA ((=~))
-import Text.Parsec
-    ( char,
-      digit,
-      noneOf,
-      string,
-      between,
-      choice,
-      many1,
-      option,
-      sepBy1,
-      (<?>),
-      parse,
-      try )
 
 class Query c where
   select :: c -> [Tree String] -> [Tree String] 
   selectList :: [c] -> [Tree String] -> [Tree String] 
-  selectList cs ts = concatMap (ts//) cs
+  selectList cs ts = concatMap (flip select ts) cs
 
 data Glob = AnyNode | AnyPath 
 
-data Query a => Descendant a = WithChild a
+data Query a => Descendant a = Child a
 
 data (Query a,Query b) => Path a b = a :> b
 
@@ -44,6 +31,9 @@ instance Query Integer where
 instance Query Char where
   select c ts = selectList [c] ts
   selectList cs ts = select (==cs) ts 
+
+instance Query (Tree String) where
+  select = undefined
 
 instance Query (String -> Bool) where
   select c = concatMap subForest . filter ( c . rootLabel )
@@ -64,7 +54,7 @@ instance Query Glob where
     where trees root@(Node _ ts) = root:(concatMap trees ts)
 
 instance Query a => Query (Descendant a) where
-  select (WithChild a) ts = filter ( not . null . select a . subForest) ts
+  select (Child a) ts = filter ( not . null . select a . return) ts
 
 instance (Query a, Query b) => Query (Path a b) where
   select (qa :> qb) ts = ts // qa // qb
