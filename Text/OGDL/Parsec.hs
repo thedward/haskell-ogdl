@@ -4,7 +4,7 @@ module Text.OGDL.Parsec where
 
 import Text.Parsec(Column, sourceColumn, (<?>), (<|>), getPosition, getState,
                    many, modifyState, runParser, try, unexpected, char, oneOf, satisfy, string,
-                   between, choice, count, lookAhead, many1, option, optional, sepEndBy, sepEndBy1)
+                   between, choice, count, lookAhead, many1, noneOf, option, optional, sepEndBy, sepEndBy1)
 import Data.Tree(Tree(Node))
 import Control.Monad(when, unless, liftM, liftM2)
 import Data.List(intercalate)
@@ -64,7 +64,11 @@ allowedChar = satisfy isAllowedChar
 
 headWordChar = lookAhead (satisfy $ (`notElem` "\"'#(,)") ) >> (satisfy isAllowedChar)
 
-tailWordChar = lookAhead (satisfy $ (`notElem` "\"#(,)") ) >> (satisfy isAllowedChar)
+tailWordChar = lookAhead (noneOf "\"#(,)") >> (satisfy isAllowedChar)
+
+headPathChar = lookAhead (satisfy $ (`notElem` "\"'#.,()[]{}") ) >> (satisfy isAllowedChar)
+
+tailPathChar = lookAhead (satisfy $ (`notElem` "\"#.,()[]{}") ) >> (satisfy isAllowedChar)
 
 -- //     [2] char_space ::= 0x20 | 0x09
 
@@ -108,6 +112,8 @@ endChar = satisfy (\c -> not (any ($c) [isAllowedChar,isSpaceChar,isBreakChar] )
 -- actually specify the characters that can appear in words?
 
 word = liftM2 (:) (try headWordChar) (option [] $ many1 (try tailWordChar))
+
+pathString = liftM2 (:) (try headPathChar ) (option [] $ many1 (try tailPathChar))
 
 -- //     [6] break ::= 0x0a | 0x0d | (0x0d 0x0a)
 
