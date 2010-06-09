@@ -1,4 +1,4 @@
-Source: haskell-ogdl
+Source: text-ogdl
 Section: libdevel
 Priority: optional
 Maintainer: Thedward Blevins <thedward@barsoom.net>
@@ -7,7 +7,7 @@ Build-Depends: debhelper (>= 5), cdbs, dpatch, haskell-devscripts (>= 0.6.15+nmu
 Build-Depends-Indep: ghc6-doc, haddock, hscolour
 Homepage: http://hackage.haskell.org/cgi-bin/ogdl/package/ogdl
 
-Package: libghc6-ogdl-dev
+Package: libghc6-text-ogdl-dev
 Architecture: any
 Depends: ${haskell:Depends}, ${shlibs:Depends}, ${misc:Depends}
 Suggests: libghc6-ogdl-doc (= ${binary:Version}), libghc6-ogdl-prof (= ${binary:Version})
@@ -22,9 +22,9 @@ Description:            Ordered Graph Data Language parsing Library
  OGDL tree.
  . -- The license under which the package is released.
 
-Package: libghc6-ogdl-prof
+Package: libghc6-text-ogdl-prof
 Architecture: any
-Depends: libghc6-ogdl-dev (= ${binary:Version}), ${haskell:Depends}, ${shlibs:Depends}, ${misc:Depends}
+Depends: libghc6-text-ogdl-dev (= ${binary:Version}), ${haskell:Depends}, ${shlibs:Depends}, ${misc:Depends}
 Description:            Ordered Graph Data Language parsing Library; profiling libraries
  This package provides a library for the Haskell programming language,
  compiled for profiling.
@@ -37,12 +37,12 @@ Description:            Ordered Graph Data Language parsing Library; profiling l
  OGDL tree.
  . -- The license under which the package is released.
 
-Package: libghc6-ogdl-doc
+Package: libghc6-text-ogdl-doc
 Section: doc
 Architecture: all
 Depends: ${misc:Depends}
 Recommends: ghc6-doc (>= 6.8.2)
-Suggests: libghc6-ogdl-dev (= ${binary:Version})
+Suggests: libghc6-text-ogdl-dev (= ${binary:Version})
 Description:            Ordered Graph Data Language parsing Library; documentation
  This package provides the documentation for a library for the Haskell
  programming language.

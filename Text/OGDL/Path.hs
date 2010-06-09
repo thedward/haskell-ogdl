@@ -7,13 +7,9 @@ import Prelude hiding (read)
 import Text.OGDL.Combinators
 import Text.OGDL.Parsec (ogdl,pathString)
 import Text.Parsec
-import Data.List.Split
 import Data.Char (isDigit)
 import Safe.Failure(read)
 import Control.Monad (liftM)
-
--- This is really awful
---compilePath = concatMap children . concatMap  (either (const []) return . parseOGDL "") . splitOn "." 
 
 pathWord = do p <- pathString
               idx <- optionMaybe index 
