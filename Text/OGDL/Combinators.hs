@@ -5,8 +5,8 @@ module Text.OGDL.Combinators where
 
 import Data.Tree ( Tree(..) )
 
-infixl 6 `with`, `without`
-infixr 5 //, `union`
+infixl 7 `with`, `without`
+infixr 6 //, `union`
 infixl 5 />, </
 infixl 4 <!,!>
 
