@@ -1,56 +1,31 @@
-Source: text-ogdl
-Section: libdevel
+Source: haskell-text-ogdl
 Priority: optional
-Maintainer: Thedward Blevins <thedward@barsoom.net>
+Section: misc
+Maintainer: Thedward Blevins <thedward.blevins@gmail.com>
+Build-Depends: debhelper (>= 7.0),
+               haskell-devscripts (>= 0.6.15+nmu7),
+               hscolour,
+               cdbs,
+               ghc6 (>= 6.8),
+               libghc6-parsec3-dev (>= 3),
+Build-Depends-Indep: ghc6-doc,
+                     haddock,
 Standards-Version: 3.8.1
-Build-Depends: debhelper (>= 5), cdbs, dpatch, haskell-devscripts (>= 0.6.15+nmu1), ghc6, ghc6-prof
-Build-Depends-Indep: ghc6-doc, haddock, hscolour
-Homepage: http://hackage.haskell.org/cgi-bin/ogdl/package/ogdl
 
 Package: libghc6-text-ogdl-dev
 Architecture: any
-Depends: ${haskell:Depends}, ${shlibs:Depends}, ${misc:Depends}
-Suggests: libghc6-ogdl-doc (= ${binary:Version}), libghc6-ogdl-prof (= ${binary:Version})
-Description:            Ordered Graph Data Language parsing Library
- This package provides a library for the Haskell programming language.
- See http://www.haskell.org/ for more information on Haskell.
- .
+Section: haskell
+Depends: ${haskell:Depends},
+         ${misc:Depends}
+Description: Ordered Graph Data Language parsing Library
+ OGDL is a structured textual format that represents
  information in the form of graphs, where the nodes
- are strings and the arcs or edges are spaces or indentation. 
- . This library provides an OGDL parser and an incomplete 
+ are strings and the arcs or edges are spaces or indentation.
+ This library provides an OGDL parser and an incomplete
  OGDL Path implentation for extracting values from an
  OGDL tree.
- . -- The license under which the package is released.
-
-Package: libghc6-text-ogdl-prof
-Architecture: any
-Depends: libghc6-text-ogdl-dev (= ${binary:Version}), ${haskell:Depends}, ${shlibs:Depends}, ${misc:Depends}
-Description:            Ordered Graph Data Language parsing Library; profiling libraries
- This package provides a library for the Haskell programming language,
- compiled for profiling.
- See http://www.haskell.org/ for more information on Haskell.
  .
- information in the form of graphs, where the nodes
- are strings and the arcs or edges are spaces or indentation. 
- . This library provides an OGDL parser and an incomplete 
- OGDL Path implentation for extracting values from an
- OGDL tree.
- . -- The license under which the package is released.
-
-Package: libghc6-text-ogdl-doc
-Section: doc
-Architecture: all
-Depends: ${misc:Depends}
-Recommends: ghc6-doc (>= 6.8.2)
-Suggests: libghc6-text-ogdl-dev (= ${binary:Version})
-Description:            Ordered Graph Data Language parsing Library; documentation
- This package provides the documentation for a library for the Haskell
- programming language.
- See http://www.haskell.org/ for more information on Haskell.
+  Author: Thedward
+  Upstream-Maintainer: thedward@barsoom.net
  .
- information in the form of graphs, where the nodes
- are strings and the arcs or edges are spaces or indentation. 
- . This library provides an OGDL parser and an incomplete 
- OGDL Path implentation for extracting values from an
- OGDL tree.
- . -- The license under which the package is released.
+ This package contains the normal library files.

@@ -51,13 +51,13 @@ Cabal-version:       >=1.2
 
 Library
   -- Modules exported by the library.
-  Exposed-modules:     Text.OGDL, Text.OGDL.Parsec, Text.OGDL.Path, Text.OGDL.Combinators
+  Exposed-modules:     Text.OGDL.Parsec, Text.OGDL.Combinators
   
   -- Packages needed in order to build this package.
-  Build-depends:       base, parsec >= 3, containers, safe, safe-failure
+  Build-depends:       base, parsec >= 3, containers
   
   -- Modules not exported by this package.
-  -- Other-modules:       
+  --Other-modules: Text.OGDL, Text.OGDL.Tree, Text.OGDL.Path
   
   -- Extra tools (e.g. alex, hsc2hs, ...) needed to build the source.
   -- Build-tools:         
