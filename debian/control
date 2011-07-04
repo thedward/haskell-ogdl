@@ -8,11 +8,11 @@ Build-Depends: debhelper (>= 7.0),
                cdbs,
                ghc6 (>= 6.8) | ghc (>= 7),
                libghc-parsec3-dev (>= 3),
-Build-Depends-Indep: ghc6-doc,
+Build-Depends-Indep: ghc-doc,
                      haddock,
 Standards-Version: 3.8.1
 
-Package: libghc6-text-ogdl-dev
+Package: libghc-text-ogdl-dev
 Architecture: any
 Section: haskell
 Depends: ${haskell:Depends},
